@@ -1,6 +1,7 @@
 package com.annualLeave.entity;
 
-import com.annualLeave.enums.StatusType;
+import com.annualLeave.enums.PermitStatus;
+import com.annualLeave.enums.PermitType;
 import com.annualLeave.framework.abstracts.AbstractEntity;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,14 +15,21 @@ import java.time.LocalDate;
 @Setter
 public class AnnualPermit extends AbstractEntity {
 
-
     private LocalDate startDate = LocalDate.now();
     private LocalDate endDate = LocalDate.now().plusDays(15);
+    private Integer permitDay = 0;
 
     @Enumerated(EnumType.STRING)
-    private StatusType status = StatusType.ACTIVE;
+    private PermitStatus status = PermitStatus.WAITING;
+
+    @Enumerated(EnumType.STRING)
+    private PermitType type = PermitType.YEARLY;
 
     @NotAudited
     @OneToOne(fetch = FetchType.LAZY)
     private Person person;
+
+    @NotAudited
+    @OneToOne(fetch = FetchType.LAZY)
+    private Person approvingPerson;
 }

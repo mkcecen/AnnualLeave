@@ -30,7 +30,6 @@ public class PersonService extends AbstractService<Person> {
         return super.save(entity);
     }
 
-
     public List<Person> getAllPersons() throws Exception {
         return dao.findAll();
     }

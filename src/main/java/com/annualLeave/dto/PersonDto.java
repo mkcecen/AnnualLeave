@@ -1,10 +1,7 @@
 package com.annualLeave.dto;
 
 
-import com.annualLeave.enums.Department;
-import com.annualLeave.enums.GenderType;
-import com.annualLeave.enums.Language;
-import com.annualLeave.enums.StatusType;
+import com.annualLeave.enums.*;
 import com.annualLeave.framework.abstracts.AbstractDto;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -25,7 +22,6 @@ public class PersonDto extends AbstractDto {
     private String surname;
     private String email;
     private String fullName;
-    private Boolean isManager;
 
     private LocalDate birthDate;
     private LocalDate startWorkDay;
@@ -34,4 +30,5 @@ public class PersonDto extends AbstractDto {
     private Language language;
     private GenderType genderType;
     private Department department;
+    private PersonType personType;
 }

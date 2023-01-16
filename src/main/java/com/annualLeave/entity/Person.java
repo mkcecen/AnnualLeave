@@ -1,19 +1,15 @@
 package com.annualLeave.entity;
 
-import com.annualLeave.enums.Department;
-import com.annualLeave.enums.GenderType;
-import com.annualLeave.enums.Language;
-import com.annualLeave.enums.StatusType;
+import com.annualLeave.enums.*;
 import com.annualLeave.framework.abstracts.AbstractEntity;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Formula;
-import org.hibernate.envers.NotAudited;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 @Getter
@@ -23,7 +19,6 @@ public class Person extends AbstractEntity {
     private String name;
     private String surname;
     private String email;
-    private Boolean isManager = Boolean.FALSE;
 
     private LocalDate birthDate;
     private LocalDate startWorkDay = LocalDate.now();
@@ -40,10 +35,10 @@ public class Person extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private Department department = Department.NONE;
 
+    @Enumerated(EnumType.STRING)
+    private PersonType personType = PersonType.OTHER;
+
     @Formula("(concat(name, ' ', surname))")
     private String fullName;
 
-    @NotAudited
-    @OneToMany(mappedBy = "person", fetch = FetchType.LAZY)
-    private List<AnnualPermit> annualPermits;
 }

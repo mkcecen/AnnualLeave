@@ -75,6 +75,15 @@ public abstract class AbstractService<E extends GenericEntity> implements Generi
         return s == null || s.trim().isEmpty();
     }
 
+    public static boolean isTrue(final Boolean b) {
+        return b != null && b == true;
+    }
+
+    public static boolean isFalse(final Boolean b) {
+        return b == null || b == false;
+    }
+
+
     public void createRuntimeException(E entity, String errorCode, String errorText, String... customErrors) throws Exception {
         List<String> customErrorList = new ArrayList<>();
         if (customErrors != null) {
