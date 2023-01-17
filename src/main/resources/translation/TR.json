@@ -1,0 +1,16 @@
+{
+  "PRSN.0001": "Dil boş geçilemez!",
+  "PRSN.0002": "E-Mail boş geçilemez",
+  "PRSN.0003": "Parola boş geçilemez!",
+  "PRSN.0004": "Ad-Soyad alanı boş geçilemez!",
+  "ANP.0001": "Login olmanız gerekmektedir!",
+  "ANP.0002": "İzin talep eden personel zorunludur!",
+  "ANP.0003": "İzin başlangıç/bitiş tarihi zorunludur!",
+  "ANP.0004": "Başlangıç/bitiş tarihleri arasında izin talebiniz mevcut!",
+  "ANP.0005": "İzin onaylamak/reddeden personel yönetici olmalı!",
+  "ANP.0006": "İzin talep eden ile onaylayan aynı kullanıcı olamaz!",
+  "ANP.0007": "Yıllık ücretli izne hak kazanmak için en az bir yıl çalışmış olmak gerekmektedir!",
+  "ANP.0008": "Mazeret izni sadece 1.yılını doldurmayan çalışanlar için geçerlidir!",
+  "ANP.0009": "5 iş gününden fazla mazeret izni kullanılamaz!",
+  "ANP.0010": "İzin hakkınız bulunmamaktadır!"
+}

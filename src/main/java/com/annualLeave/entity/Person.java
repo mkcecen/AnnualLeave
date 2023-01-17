@@ -19,6 +19,7 @@ public class Person extends AbstractEntity {
     private String name;
     private String surname;
     private String email;
+    private String password;
 
     private LocalDate birthDate;
     private LocalDate startWorkDay = LocalDate.now();

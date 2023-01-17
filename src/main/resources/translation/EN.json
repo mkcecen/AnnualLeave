@@ -1,0 +1,16 @@
+{
+  "PRSN.0001": "Language cannot be empty!",
+  "PRSN.0002": "E-Mail cannot be empty",
+  "PRSN.0003": "Password cannot be empty!",
+  "PRSN.0004": "Name/Surname field cannot be empty!",
+  "ANP.0001": "You must be logged in!",
+  "ANP.0002": "Person requesting leave is mandatory!",
+  "ANP.0003": "Permission start/end date is required!",
+  "ANP.0004": "You have a leave request between start/end dates!",
+  "ANP.0005": "Permission approve/deny staff must be admin!",
+  "ANP.0006": "Permission requester and approver cannot be the same user!",
+  "ANP.0007": "It is necessary to have worked for at least one year to qualify for annual paid leave!",
+  "ANP.0008": "Excuse leave is only valid for employees who have not completed their 1st year!",
+  "ANP.0009": "No more than 5 working days of excused leave!",
+  "ANP.0010": "You are not entitled to permission!"
+}

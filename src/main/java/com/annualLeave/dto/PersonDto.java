@@ -22,6 +22,7 @@ public class PersonDto extends AbstractDto {
     private String surname;
     private String email;
     private String fullName;
+    private String password;
 
     private LocalDate birthDate;
     private LocalDate startWorkDay;

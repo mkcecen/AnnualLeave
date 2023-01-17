@@ -9,4 +9,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class PersonMapper extends AbstractMapper<Person, PersonDto> {
 
+    @Override
+    public PersonDto map(Person entity) {
+        PersonDto dto = super.map(entity);
+        dto.setPassword(null);
+        return dto;
+    }
 }

@@ -31,38 +31,47 @@ public class AnnualPermitService extends AbstractService<AnnualPermit> {
 
     @Override
     public AnnualPermit save(AnnualPermit entity) throws Exception {
-        if (entity.getPerson() == null) {
-            throw new Exception("İzin talebi yapan personel boş olamaz!");
+        if(isFalse(hasSession())){
+            createRuntimeException("ANP.0001", "Login olmanız gerekmektedir!", null);
         }
-        if (entity.getStartDate().isAfter(entity.getEndDate())) {
-            throw new Exception("Başlangıç tarihi bitiş tarihinden sonra olamaz!");
+        if(entity.getPerson()==null){
+            createRuntimeException("ANP.0002", "İzin talep eden personel zorunludur!", null);
+        }
+
+        if (entity.getStartDate() == null || entity.getEndDate() == null) {
+            createRuntimeException("ANP.0003", "İzin başlangıç/bitiş tarihi zorunludur!", null);
+        }
+        if (dao.checkAnnualPermit(entity.getStartDate(), entity.getEndDate()) != null) {
+            createRuntimeException("ANP.0004", "Başlangıç/bitiş tarihleri arasında izin talebiniz mevcut!", null);
+        }
+        if (!PermitStatus.WAITING.equals(entity.getStatus())) {
+            entity.setApprovingPerson(session.getPerson());
+            if (!PersonType.ADMIN.equals(entity.getPerson().getPersonType())) {
+                createRuntimeException("ANP.0005", "İzin onaylamak/reddeden personel yönetici olmalı!", null);
+                throw new Exception("");
+            }else if(entity.getPerson().getId().equals(entity.getApprovingPerson().getId())){
+                createRuntimeException("ANP.0006", "İzin talep eden ile onaylayan aynı kullanıcı olamaz!", null);
+            }
         }
 
         Person person = personService.getById(entity.getPerson().getId());
         Period period = Period.between(person.getStartWorkDay(), LocalDate.now());
+
         Integer day = calculateDays(entity.getStartDate(), entity.getEndDate());
         entity.setPermitDay(day);
 
 
         if (PermitType.YEARLY.equals(entity.getType()) && period.getYears() < 1) {
-            throw new Exception("Yıllık ücretli izne hak kazanmak için en az bir yıl çalışmış olmak gerekmektedir!");
+            createRuntimeException("ANP.0007", "Yıllık ücretli izne hak kazanmak için en az bir yıl çalışmış olmak gerekmektedir!", null);
         } else if (PermitType.EXCUSE.equals(entity.getType())) {
             if (period.getYears() > 0) {
-                throw new Exception("Mazeret izni sadece 1.yılını doldurmayan çalışanlar için geçerlidir! ");
+                createRuntimeException("ANP.0008", "Mazeret izni sadece 1.yılını doldurmayan çalışanlar için geçerlidir!", null);
             } else if (day > 5) {
-                throw new Exception("5 iş gününden fazla mazeret izni kullanılamaz!");
+                createRuntimeException("ANP.0009", "5 iş gününden fazla mazeret izni kullanılamaz!", null);
             }
         }
 
-        if (!PermitStatus.WAITING.equals(entity.getStatus())) {
-            if (entity.getApprovingPerson() == null) {
-                throw new Exception("İzin onaylamak/reddeden personel girilmeli!");
-            } else if (!PersonType.ADMIN.equals(entity.getPerson().getPersonType())) {
-                throw new Exception("İzin onaylamak/reddeden personel yönetici olmalı!");
-            } else if (entity.getApprovingPerson() == null) {
-                throw new Exception("Durum değişitirmek için onaylayan kullanıcının seçilmesi gerekmektedir!");
-            }
-        }
+
 
         entity = super.save(entity);
         calculateTotalPermit(entity.getPerson(), PermitType.YEARLY, period);
@@ -88,23 +97,29 @@ public class AnnualPermitService extends AbstractService<AnnualPermit> {
         if (totalYear <= 5) {
             totalPermit = totalYear * 15;
             if (totalPermit < dao.calculateTotalPermit(person, type)) {
-                throw new Exception("İzin hakkınız bulunmamaktadır!");
+                createRuntimeException("ANP.0010", "İzin hakkınız bulunmamaktadır!", null);
             }
         } else if (totalYear > 5 && totalYear <= 10) {
             //TODO: 5*15
             totalPermit = 75;
             totalPermit += (totalYear - 5) * 18;
             if (totalPermit < dao.calculateTotalPermit(person, type)) {
-                throw new Exception("İzin hakkınız bulunmamaktadır!");
+                createRuntimeException("ANP.0010", "İzin hakkınız bulunmamaktadır!", null);
             }
         } else {
             //TODO: (5*15) + (5*18)
             totalPermit = 1555;
             totalPermit += (totalYear - 10) * 24;
             if (totalPermit < dao.calculateTotalPermit(person, type)) {
-                throw new Exception("İzin hakkınız bulunmamaktadır!");
+                createRuntimeException("ANP.0010", "İzin hakkınız bulunmamaktadır!", null);
             }
         }
+    }
 
+    @Override
+    public AnnualPermit actNew() throws Exception {
+        AnnualPermit annualPermit = super.actNew();
+        annualPermit.setPerson(session.getPerson());
+        return annualPermit;
     }
 }

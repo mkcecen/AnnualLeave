@@ -1,13 +1,16 @@
 package com.annualLeave.framework.abstracts;
 
+import com.annualLeave.framework.exceptions.CustomException;
 import com.annualLeave.framework.generic.GenericDao;
 import com.annualLeave.framework.generic.GenericEntity;
 import com.annualLeave.framework.generic.GenericService;
+import com.annualLeave.framework.security.SessionContext;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,7 +26,7 @@ public abstract class AbstractService<E extends GenericEntity> implements Generi
     protected Gson gson = new Gson();
 
     @Autowired protected ApplicationContext appContext;
-
+    @Autowired protected SessionContext session;
     private Class<E> entityClass;
 
     public AbstractService() {
@@ -84,15 +87,25 @@ public abstract class AbstractService<E extends GenericEntity> implements Generi
     }
 
 
-    public void createRuntimeException(E entity, String errorCode, String errorText, String... customErrors) throws Exception {
+    public void createRuntimeException(String errorCode, String errorText, String... customErrors) throws Exception {
         List<String> customErrorList = new ArrayList<>();
         if (customErrors != null) {
             for (int i = 1; i <= customErrors.length; i++) {
                 customErrorList.add(customErrors[i - 1]);
             }
         }
-        throw new Exception("");
-//        throw new NakilixException(entity, errorCode, errorText, customErrorList);
+        throw new CustomException(errorCode, errorText, customErrorList);
     }
 
+    public boolean hasSession() {
+        if (RequestContextHolder.getRequestAttributes() != null) {
+            try {
+                if (session.getPerson() != null)
+                    return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return false;
+    }
 }

@@ -17,12 +17,12 @@ import java.time.LocalDate;
 public class AnnualPermitDto extends AbstractDto {
     private static final long serialVersionUID = 1L;
 
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private Integer permitDay;
+    private LocalDate startDate = LocalDate.now();
+    private LocalDate endDate = LocalDate.now().plusDays(15);
+    private Integer permitDay = 0;
 
-    private PermitStatus status;
-    private PermitType type;
-    private PersonDto person;
-    private PersonDto approvingPerson;
+    private PermitStatus status = PermitStatus.WAITING;
+    private PermitType type = PermitType.YEARLY;
+    private PersonDto person = null;
+    private PersonDto approvingPerson = null;
 }
