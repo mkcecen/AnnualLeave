@@ -6,6 +6,8 @@ import com.annualLeave.framework.abstracts.AbstractRest;
 import com.annualLeave.mapper.LoginMapper;
 import com.annualLeave.mapper.PersonMapper;
 import com.annualLeave.service.LoginService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/login")
+@Api(value = "Login Api documentation")
 public class LoginRest extends AbstractRest<Login, LoginDto> {
 
     private LoginMapper mapper;
@@ -32,7 +35,8 @@ public class LoginRest extends AbstractRest<Login, LoginDto> {
     }
 
 
-    @GetMapping()
+    @GetMapping("/login")
+    @ApiOperation(value = "Login request")
     public ResponseEntity<LoginDto> login(@RequestParam String email, @RequestParam String password, @RequestParam String language) throws Exception {
         Login login = service.login(email, password,language);
         return new ResponseEntity<LoginDto>(mapper.map(login), HttpStatus.OK);

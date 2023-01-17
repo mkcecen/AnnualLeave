@@ -7,10 +7,22 @@ import com.annualLeave.enums.PermitStatus;
 import com.annualLeave.enums.PermitType;
 import com.annualLeave.enums.PersonType;
 import com.annualLeave.framework.abstracts.AbstractService;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.Charset;
+import java.security.Key;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.Period;
@@ -78,13 +90,25 @@ public class AnnualPermitService extends AbstractService<AnnualPermit> {
         return entity;
     }
 
-    public Integer calculateDays(LocalDate startDate, LocalDate endDate) {
+    public Integer calculateDays(LocalDate startDate, LocalDate endDate) throws Exception{
         Integer day = 0;
         long dats = ChronoUnit.DAYS.between(startDate, endDate);
+        JsonArray jsonArray = checkOfficialHolidays(startDate);
         for (int i = 0; i <= dats; i++) {
-            if (!(startDate.getDayOfWeek() == DayOfWeek.SATURDAY ||
-                    startDate.getDayOfWeek() == DayOfWeek.SUNDAY)) {
-                ++day;
+            Boolean isRepublcHoliday = Boolean.FALSE;
+            if (!(startDate.getDayOfWeek() == DayOfWeek.SATURDAY || startDate.getDayOfWeek() == DayOfWeek.SUNDAY)) {
+                for (JsonElement packageListElement : jsonArray) {
+                    JsonObject packageListObj = packageListElement.getAsJsonObject();
+                    String date = packageListObj.get("start").getAsJsonObject().get("date").getAsString();
+
+                    if (startDate.toString().equals(date)) {
+                        isRepublcHoliday = true;
+                        break;
+                    }
+                }
+                if (!isRepublcHoliday) {
+                    ++day;
+                }
             }
             startDate = startDate.plusDays(1);
         }
@@ -121,5 +145,15 @@ public class AnnualPermitService extends AbstractService<AnnualPermit> {
         AnnualPermit annualPermit = super.actNew();
         annualPermit.setPerson(session.getPerson());
         return annualPermit;
+    }
+
+    public JsonArray checkOfficialHolidays(LocalDate localDate) throws Exception {
+        String sURL = "https://www.googleapis.com/calendar/v3/calendars/tr.turkish%23holiday%40group.v.calendar.google.com/events?key=AIzaSyAA7SjdUVkPjToQ4Z6BYGn5DrdQ7NxIeL4"; //just a string
+        URL url = new URL(sURL);
+        URLConnection request = url.openConnection();
+        request.connect();
+        JsonParser jsonParser = new JsonParser();
+        JsonElement jsonElement = jsonParser.parse(new InputStreamReader((InputStream) request.getContent()));
+        return jsonElement.getAsJsonObject().get("items").getAsJsonArray();
     }
 }
